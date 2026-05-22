@@ -115,6 +115,35 @@ CREATE TABLE IF NOT EXISTS `review` (
     KEY `idx_job_id` (`job_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='审核表';
 
+-- 私聊会话表
+CREATE TABLE IF NOT EXISTS `conversation` (
+    `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '会话ID',
+    `application_id` BIGINT NOT NULL COMMENT '关联投递ID',
+    `student_id` BIGINT NOT NULL COMMENT '学生ID',
+    `company_id` BIGINT NOT NULL COMMENT '企业ID',
+    `job_id` BIGINT NOT NULL COMMENT '岗位ID',
+    `last_message` VARCHAR(500) NULL COMMENT '最后一条消息预览',
+    `last_message_time` DATETIME NULL COMMENT '最后一条消息时间',
+    `create_time` DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_application_id` (`application_id`),
+    KEY `idx_student_id` (`student_id`),
+    KEY `idx_company_id` (`company_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='私聊会话表';
+
+-- 私聊消息表
+CREATE TABLE IF NOT EXISTS `message` (
+    `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '消息ID',
+    `conversation_id` BIGINT NOT NULL COMMENT '会话ID',
+    `sender_id` BIGINT NOT NULL COMMENT '发送人ID',
+    `content` TEXT NOT NULL COMMENT '消息内容',
+    `is_read` TINYINT(1) NOT NULL DEFAULT 0 COMMENT '是否已读',
+    `send_time` DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '发送时间',
+    PRIMARY KEY (`id`),
+    KEY `idx_conversation_id` (`conversation_id`),
+    KEY `idx_send_time` (`send_time`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='私聊消息表';
+
 -- 通知表
 CREATE TABLE IF NOT EXISTS `notification` (
     `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '通知ID',

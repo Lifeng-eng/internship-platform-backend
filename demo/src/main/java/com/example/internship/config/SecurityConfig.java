@@ -34,6 +34,8 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 // 认证接口 - 公开
                 .requestMatchers("/api/auth/**").permitAll()
+                // WebSocket - STOMP 握手单独认证
+                .requestMatchers("/ws/**").permitAll()
                 // 岗位浏览 - 公开
                 .requestMatchers(HttpMethod.GET, "/api/jobs", "/api/jobs/*").permitAll()
                 // 学生接口
