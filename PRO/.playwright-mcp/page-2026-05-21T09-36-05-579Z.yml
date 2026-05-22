@@ -1,0 +1,133 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5] [cursor=pointer]:
+      - generic [ref=e6]: 🎓
+      - generic [ref=e7]: 实习通
+    - generic [ref=e8]:
+      - button "首页" [active] [ref=e10] [cursor=pointer]:
+        - generic [ref=e11]: 首页
+      - button "岗位审核" [ref=e463] [cursor=pointer]:
+        - generic [ref=e464]: 岗位审核
+      - button "用户管理" [ref=e465] [cursor=pointer]:
+        - generic [ref=e466]: 用户管理
+      - button "数据统计" [ref=e467] [cursor=pointer]:
+        - generic [ref=e468]: 数据统计
+      - generic [ref=e470]:
+        - button "通知" [ref=e471] [cursor=pointer]:
+          - generic [ref=e472]: 通知
+        - superscript [ref=e473]:
+          - generic [ref=e475]: "2"
+      - button "系统管理员" [ref=e477] [cursor=pointer]:
+        - generic [ref=e478]: 系统管理员
+  - main [ref=e24]:
+    - generic [ref=e794]:
+      - generic [ref=e797]:
+        - generic [ref=e800]:
+          - searchbox "搜索岗位名称或公司" [ref=e801]
+          - button "search" [ref=e803] [cursor=pointer]:
+            - img "search" [ref=e805]:
+              - img [ref=e806]
+        - generic [ref=e809] [cursor=pointer]:
+          - generic [ref=e811]:
+            - combobox [ref=e813]
+            - generic: 地区
+          - generic:
+            - img:
+              - img
+        - generic [ref=e815] [cursor=pointer]:
+          - generic [ref=e817]:
+            - combobox [ref=e819]
+            - generic: 薪资
+          - generic:
+            - img:
+              - img
+        - button "搜 索" [ref=e821] [cursor=pointer]:
+          - generic [ref=e822]: 搜 索
+      - heading "全部岗位 (6)" [level=3] [ref=e823]
+      - list [ref=e827]:
+        - generic [ref=e830] [cursor=pointer]:
+          - generic [ref=e831]:
+            - generic [ref=e832]:
+              - generic [ref=e834]: 阿
+              - generic [ref=e835]:
+                - strong [ref=e836]: Java开发实习生
+                - generic [ref=e837]: 阿里巴巴集团 · 杭州
+            - generic [ref=e838]:
+              - generic [ref=e839]: 杭州
+              - generic [ref=e840]: 4000-6000元/月
+          - generic [ref=e841]:
+            - generic [ref=e842]: 2026-05-18
+            - button "查看详情" [ref=e843]:
+              - generic [ref=e844]: 查看详情
+        - generic [ref=e847] [cursor=pointer]:
+          - generic [ref=e848]:
+            - generic [ref=e849]:
+              - generic [ref=e851]: 腾
+              - generic [ref=e852]:
+                - strong [ref=e853]: 前端开发实习生
+                - generic [ref=e854]: 腾讯科技 · 深圳
+            - generic [ref=e855]:
+              - generic [ref=e856]: 深圳
+              - generic [ref=e857]: 5000-8000元/月
+          - generic [ref=e858]:
+            - generic [ref=e859]: 高薪
+            - generic [ref=e860]: 2026-05-19
+            - button "查看详情" [ref=e861]:
+              - generic [ref=e862]: 查看详情
+        - generic [ref=e865] [cursor=pointer]:
+          - generic [ref=e866]:
+            - generic [ref=e867]:
+              - generic [ref=e869]: 字
+              - generic [ref=e870]:
+                - strong [ref=e871]: 数据分析师实习生
+                - generic [ref=e872]: 字节跳动 · 北京
+            - generic [ref=e873]:
+              - generic [ref=e874]: 北京
+              - generic [ref=e875]: 3500-5500元/月
+          - generic [ref=e876]:
+            - generic [ref=e877]: 2026-05-20
+            - button "查看详情" [ref=e878]:
+              - generic [ref=e879]: 查看详情
+        - generic [ref=e882] [cursor=pointer]:
+          - generic [ref=e883]:
+            - generic [ref=e884]:
+              - generic [ref=e886]: 美
+              - generic [ref=e887]:
+                - strong [ref=e888]: 产品经理实习生
+                - generic [ref=e889]: 美团 · 北京
+            - generic [ref=e890]:
+              - generic [ref=e891]: 北京
+              - generic [ref=e892]: 3000-4500元/月
+          - generic [ref=e893]:
+            - generic [ref=e894]: 2026-05-17
+            - button "查看详情" [ref=e895]:
+              - generic [ref=e896]: 查看详情
+        - generic [ref=e899] [cursor=pointer]:
+          - generic [ref=e900]:
+            - generic [ref=e901]:
+              - generic [ref=e903]: 京
+              - generic [ref=e904]:
+                - strong [ref=e905]: 测试开发实习生
+                - generic [ref=e906]: 京东集团 · 北京
+            - generic [ref=e907]:
+              - generic [ref=e908]: 北京
+              - generic [ref=e909]: 3500-5000元/月
+          - generic [ref=e910]:
+            - generic [ref=e911]: 2026-05-15
+            - button "查看详情" [ref=e912]:
+              - generic [ref=e913]: 查看详情
+        - generic [ref=e916] [cursor=pointer]:
+          - generic [ref=e917]:
+            - generic [ref=e918]:
+              - generic [ref=e920]: 网
+              - generic [ref=e921]:
+                - strong [ref=e922]: UI设计实习生
+                - generic [ref=e923]: 网易 · 广州
+            - generic [ref=e924]:
+              - generic [ref=e925]: 广州
+              - generic [ref=e926]: 3000-5000元/月
+          - generic [ref=e927]:
+            - generic [ref=e928]: 2026-05-21
+            - button "查看详情" [ref=e929]:
+              - generic [ref=e930]: 查看详情
+  - contentinfo [ref=e167]: © 2026 实习通 — 大学生实训实习岗位投递与校企对接系统

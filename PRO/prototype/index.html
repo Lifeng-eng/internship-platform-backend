@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>实习投递与校企对接系统</title>
+  <!-- React -->
+  <script src="https://cdn.jsdelivr.net/npm/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://cdn.jsdelivr.net/npm/@babel/standalone/babel.min.js"></script>
+  <!-- Ant Design -->
+  <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/antd@5/dist/antd.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ant-design/icons@5/font/anticons.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background: #f5f5f5; }
+    .logo { color: #fff; font-size: 18px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+    .logo-icon { font-size: 24px; }
+    .page-container { max-width: 1200px; margin: 24px auto; padding: 0 16px; }
+    .page-header { background: #fff; padding: 24px; border-radius: 8px; margin-bottom: 24px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+    .page-title { font-size: 22px; font-weight: 600; color: #1d1d1f; }
+    .page-subtitle { color: #8c8c8c; margin-top: 4px; font-size: 14px; }
+    .stat-card { text-align: center; }
+    .stat-number { font-size: 32px; font-weight: 700; color: #1677ff; }
+    .stat-label { color: #8c8c8c; font-size: 14px; margin-top: 4px; }
+    .job-card { cursor: pointer; transition: box-shadow 0.2s; }
+    .job-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    .tag-margin { margin-right: 4px; margin-bottom: 4px; }
+    .status-pending { color: #faad14; }
+    .status-published { color: #52c41a; }
+    .status-rejected { color: #ff4d4f; }
+    .status-closed { color: #8c8c8c; }
+    .status-accepted { color: #52c41a; }
+    .login-container { display: flex; justify-content: center; align-items: center; min-height: 100vh; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+    .login-card { width: 400px; background: #fff; border-radius: 12px; box-shadow: 0 8px 40px rgba(0,0,0,0.12); overflow: hidden; }
+    .login-header { background: linear-gradient(135deg, #1677ff, #0958d9); color: #fff; padding: 32px; text-align: center; }
+    .login-header h2 { font-size: 24px; margin-bottom: 8px; }
+    .login-header p { opacity: 0.8; font-size: 14px; }
+    .login-body { padding: 32px; }
+    .recommend-banner { background: linear-gradient(135deg, #e6f4ff, #f0f5ff); border: 1px solid #bae0ff; border-radius: 8px; padding: 16px 24px; margin-bottom: 24px; }
+    .recommend-banner h4 { color: #1677ff; margin-bottom: 8px; }
+    .detail-header { background: #fff; padding: 32px; border-radius: 8px; margin-bottom: 24px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+    .company-info-card { background: #fafafa; padding: 16px; border-radius: 8px; margin-bottom: 16px; }
+    .chart-placeholder { background: #fafafa; border: 1px dashed #d9d9d9; border-radius: 8px; height: 300px; display: flex; align-items: center; justify-content: center; color: #8c8c8c; }
+    .mini-chart { display: flex; align-items: flex-end; gap: 4px; height: 60px; }
+    .mini-bar { width: 8px; background: #1677ff; border-radius: 2px 2px 0 0; }
+    .profile-avatar { width: 64px; height: 64px; background: #1677ff; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 600; }
+    .profile-header { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; }
+    .notification-item { cursor: pointer; transition: background 0.2s; }
+    .notification-item:hover { background: #f5f5f5; }
+    .notification-unread { border-left: 3px solid #1677ff; background: #f0f5ff; }
+    .resume-section { background: #fafafa; padding: 16px; border-radius: 8px; margin-bottom: 16px; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    const {
+      Layout, Menu, Button, Card, Row, Col, Form, Input, Select, Tag, Table,
+      Tabs, Avatar, Badge, Modal, message, Space, Descriptions, Statistic,
+      Timeline, Steps, Alert, List, Typography, Result, Radio, DatePicker,
+      Dropdown, Breadcrumb, Empty, Tooltip, Switch, Upload, Progress, Checkbox
+    } = antd;
+    const { useState, useEffect, useMemo } = React;
+
+    // ==================== Mock Data ====================
+    const mockJobs = [
+      { id: 1, title: 'Java开发实习生', company_name: '阿里巴巴集团', salary_min: 4000, salary_max: 6000, location: '杭州', description: '参与后端服务开发，使用Spring Boot框架。负责需求分析、编码、单元测试及问题排查。', requirements: '1. 计算机或相关专业本科以上\n2. 熟悉Java基础，了解Spring Boot\n3. 了解MySQL数据库\n4. 良好的沟通能力和团队协作精神', publish_time: '2026-05-18', status: 'published', company_intro: '阿里巴巴集团是中国领先的互联网科技公司...', company_scale: '10000人以上', applied: false },
+      { id: 2, title: '前端开发实习生', company_name: '腾讯科技', salary_min: 5000, salary_max: 8000, location: '深圳', description: '参与微信前端开发，使用React/Vue框架。负责页面开发、性能优化和用户体验提升。', requirements: '1. 熟悉HTML/CSS/JavaScript\n2. 熟悉React或Vue框架\n3. 了解前端工程化工具\n4. 有项目经验者优先', publish_time: '2026-05-19', status: 'published', company_intro: '腾讯科技是...', company_scale: '10000人以上', applied: false },
+      { id: 3, title: '数据分析师实习生', company_name: '字节跳动', salary_min: 3500, salary_max: 5500, location: '北京', description: '参与数据分析和数据可视化工作，使用Python和SQL进行数据处理。', requirements: '1. 统计学、数学或计算机相关专业\n2. 熟悉Python数据分析库\n3. 了解SQL\n4. 有数据可视化经验优先', publish_time: '2026-05-20', status: 'published', company_intro: '字节跳动是...', company_scale: '10000人以上', applied: false },
+      { id: 4, title: '产品经理实习生', company_name: '美团', salary_min: 3000, salary_max: 4500, location: '北京', description: '参与产品需求分析、原型设计、用户调研。', requirements: '1. 本科及以上学历\n2. 逻辑清晰，沟通能力强\n3. 熟练使用Axure或Figma\n4. 有互联网产品经验者优先', publish_time: '2026-05-17', status: 'published', company_intro: '美团是...', company_scale: '5000-10000人', applied: false },
+      { id: 5, title: '测试开发实习生', company_name: '京东集团', salary_min: 3500, salary_max: 5000, location: '北京', description: '参与自动化测试框架搭建和维护。', requirements: '1. 计算机相关专业\n2. 熟悉Java或Python\n3. 了解Selenium等测试工具\n4. 细心严谨', publish_time: '2026-05-15', status: 'published', company_intro: '京东是...', company_scale: '10000人以上', applied: false },
+      { id: 6, title: 'UI设计实习生', company_name: '网易', salary_min: 3000, salary_max: 5000, location: '广州', description: '参与产品UI设计，包括界面设计、图标设计、交互设计等。', requirements: '1. 设计相关专业\n2. 熟练使用Figma/Sketch/PS\n3. 有作品集\n4. 良好的审美和创意能力', publish_time: '2026-05-21', status: 'published', company_intro: '网易是...', company_scale: '5000-10000人', applied: false },
+    ];
+
+    const mockApplications = [
+      { id: 1, job_title: 'Java开发实习生', company_name: '阿里巴巴集团', status: 'pending', apply_time: '2026-05-19 10:30', handle_time: '', resume_path: 'resume.pdf', apply_comment: '我对贵公司的后端开发岗位非常感兴趣' },
+      { id: 2, job_title: '前端开发实习生', company_name: '腾讯科技', status: 'accepted', apply_time: '2026-05-18 14:20', handle_time: '2026-05-19 09:15', handle_comment: '请于6月1日到公司报到', resume_path: 'resume.pdf', apply_comment: '' },
+      { id: 3, job_title: '数据分析师实习生', company_name: '字节跳动', status: 'rejected', apply_time: '2026-05-17 08:45', handle_time: '2026-05-18 11:30', handle_comment: '经验不足，暂不匹配', resume_path: 'resume.pdf', apply_comment: '' },
+    ];
+
+    const mockReceivedApplications = [
+      { id: 1, student_name: '张三', student_id: '2021001234', major: '计算机科学与技术', job_title: 'Java开发实习生', status: 'pending', apply_time: '2026-05-20 15:30', resume_path: 'zhangsan_resume.pdf', apply_comment: '熟练掌握Java和Spring Boot' },
+      { id: 2, student_name: '李四', student_id: '2021005678', major: '软件工程', job_title: 'Java开发实习生', status: 'pending', apply_time: '2026-05-20 10:15', resume_path: 'lisi_resume.pdf', apply_comment: '' },
+      { id: 3, student_name: '王五', student_id: '2020009012', major: '信息管理与信息系统', job_title: '前端开发实习生', status: 'accepted', apply_time: '2026-05-19 09:00', handle_time: '2026-05-20 14:00', handle_comment: '技术基础扎实，欢迎加入', resume_path: 'wangwu_resume.pdf', apply_comment: '有React项目经验' },
+    ];
+
+    const mockNotifications = [
+      { id: 1, content: '您投递的"Java开发实习生"（阿里巴巴集团）已通过审核并发布', type: 'application', status: 'unread', send_time: '2026-05-20 16:00' },
+      { id: 2, content: '企业【腾讯科技】接受了您的投递，请查看详情', type: 'application', status: 'unread', send_time: '2026-05-19 09:15' },
+      { id: 3, content: '您发布的"Java开发实习生"已通过审核', type: 'review', status: 'read', send_time: '2026-05-18 10:00' },
+      { id: 4, content: '您投递的"数据分析师实习生"已被拒绝', type: 'application', status: 'read', send_time: '2026-05-18 11:30' },
+    ];
+
+    const mockPendingJobs = [
+      { id: 1, title: 'Java开发实习生', company_name: '阿里巴巴集团', location: '杭州', publish_time: '2026-05-21 09:00', status: 'pending' },
+      { id: 2, title: '前端开发实习生', company_name: '腾讯科技', location: '深圳', publish_time: '2026-05-21 10:30', status: 'pending' },
+      { id: 3, title: 'UI设计实习生', company_name: '网易', location: '广州', publish_time: '2026-05-21 14:00', status: 'pending' },
+    ];
+
+    const mockUsers = [
+      { id: 1, username: 'zhangsan', role: 'student', name: '张三', phone: '138****1234', status: 'normal', create_time: '2026-03-15' },
+      { id: 2, username: 'alibaba_hr', role: 'company', name: '阿里巴巴HR', phone: '139****5678', status: 'normal', create_time: '2026-04-01' },
+      { id: 3, username: 'tencent_hr', role: 'company', name: '腾讯HR', phone: '136****9012', status: 'normal', create_time: '2026-04-10' },
+      { id: 4, username: 'wangwu', role: 'student', name: '王五', phone: '137****3456', status: 'disabled', create_time: '2026-03-20' },
+    ];
+
+    // ==================== App ====================
+    function App() {
+      // Hash-based routing
+      const initialRoute = window.location.hash.slice(1) || '/';
+      const [route, setRouteState] = useState(initialRoute);
+      const setRoute = (path) => { setRouteState(path); window.location.hash = path; };
+      useEffect(() => {
+        const handler = () => setRouteState(window.location.hash.slice(1) || '/');
+        window.addEventListener('hashchange', handler);
+        return () => window.removeEventListener('hashchange', handler);
+      }, []);
+      const [user, setUser] = useState(null); // null = visitor, { id, name, role } = logged in
+      const [searchText, setSearchText] = useState('');
+      const [locationFilter, setLocationFilter] = useState('');
+      const [salaryFilter, setSalaryFilter] = useState(null);
+
+      // Simulate login
+      const handleLogin = (values) => {
+        const roleMap = { 'student': 'student', 'company': 'company', 'admin': 'admin' };
+        const role = roleMap[values.role] || 'student';
+        const nameMap = { student: '张三（学生）', company: '阿里巴巴HR', admin: '系统管理员' };
+        setUser({ id: role === 'admin' ? 3 : role === 'company' ? 2 : 1, name: nameMap[role], role });
+        message.success('登录成功');
+        setRoute('/');
+      };
+
+      // Expose logout via window for testing
+      window.doLogout = () => { setUser(null); setRoute('/login'); };
+      const handleLogout = () => { window.doLogout(); message.info('已退出登录'); };
+      const navigate = (path) => { setRoute(path); window.scrollTo(0, 0); };
+
+      // Header
+      const header = (
+        <Layout.Header style={{ background: '#fff', padding: '0 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #f0f0f0', position: 'sticky', top: 0, zIndex: 100, boxShadow: '0 1px 4px rgba(0,0,0,0.05)' }}>
+          <div className="logo" onClick={() => navigate('/')}>
+            <span style={{ fontSize: '20px' }}>🎓</span>
+            <span>实习通</span>
+          </div>
+          <Space>
+            <Button type="link" onClick={() => navigate('/')}>首页</Button>
+            {user?.role === 'student' && <>
+              <Button type="link" onClick={() => navigate('/student/applications')}>我的投递</Button>
+              <Button type="link" onClick={() => navigate('/student/profile')}>个人中心</Button>
+            </>}
+            {user?.role === 'company' && <>
+              <Button type="link" onClick={() => navigate('/company/jobs')}>我的岗位</Button>
+              <Button type="link" onClick={() => navigate('/company/applications')}>收到的投递</Button>
+              <Button type="link" onClick={() => navigate('/company/stats')}>数据统计</Button>
+              <Button type="link" onClick={() => navigate('/company/profile')}>个人中心</Button>
+            </>}
+            {user?.role === 'admin' && <>
+              <Button type="link" onClick={() => navigate('/admin/jobs')}>岗位审核</Button>
+              <Button type="link" onClick={() => navigate('/admin/users')}>用户管理</Button>
+              <Button type="link" onClick={() => navigate('/admin/stats')}>数据统计</Button>
+            </>}
+            <Badge count={user ? 2 : 0} style={{ marginLeft: 8 }}>
+              <Button type="link" onClick={() => navigate('/notifications')}>通知</Button>
+            </Badge>
+            {user ? (
+              <Dropdown menu={{ items: [
+                { key: 'profile', label: '个人中心', onClick: () => navigate(`/${user.role}/profile`) },
+                { key: 'logout', label: '退出登录', onClick: handleLogout },
+              ]}}>
+                <Button type="primary" style={{ marginLeft: 8 }}>{user.name}</Button>
+              </Dropdown>
+            ) : (
+              <Space>
+                <Button onClick={() => navigate('/login')}>登录</Button>
+                <Dropdown menu={{ items: [
+                  { key: 'student', label: '学生注册', onClick: () => navigate('/register/student') },
+                  { key: 'company', label: '企业注册', onClick: () => navigate('/register/company') },
+                ]}}>
+                  <Button type="primary">注册</Button>
+                </Dropdown>
+              </Space>
+            )}
+          </Space>
+        </Layout.Header>
+      );
+
+      // Pages
+      const renderPage = () => {
+        switch(route) {
+          case '/': return <HomePage navigate={navigate} user={user} searchText={searchText} setSearchText={setSearchText} locationFilter={locationFilter} setLocationFilter={setLocationFilter} />;
+          case '/login': return <LoginPage onLogin={handleLogin} navigate={navigate} />;
+          case '/register/student': return <RegisterPage role="student" navigate={navigate} />;
+          case '/register/company': return <RegisterPage role="company" navigate={navigate} />;
+          case '/jobs/:id': return <JobDetailPage navigate={navigate} user={user} />;
+          case '/student/applications': return <StudentApplicationsPage navigate={navigate} />;
+          case '/student/profile': return <StudentProfilePage />;
+          case '/company/jobs': return <CompanyJobsPage navigate={navigate} />;
+          case '/company/applications': return <CompanyApplicationsPage />;
+          case '/company/stats': return <CompanyStatsPage />;
+          case '/company/profile': return <CompanyProfilePage />;
+          case '/admin/jobs': return <AdminReviewPage />;
+          case '/admin/users': return <AdminUsersPage />;
+          case '/admin/stats': return <AdminStatsPage />;
+          case '/admin/profile': return <AdminProfilePage />;
+          case '/notifications': return <NotificationsPage />;
+          default: return <HomePage navigate={navigate} user={user} searchText={searchText} setSearchText={setSearchText} />;
+        }
+      };
+
+      return (
+        <Layout style={{ minHeight: '100vh' }}>
+          {header}
+          <Layout.Content style={{ background: '#f5f5f5' }}>
+            {renderPage()}
+          </Layout.Content>
+          <Layout.Footer style={{ textAlign: 'center', color: '#8c8c8c' }}>
+            © 2026 实习通 — 大学生实训实习岗位投递与校企对接系统
+          </Layout.Footer>
+        </Layout>
+      );
+    }
+
+    // ==================== HomePage ====================
+    function HomePage({ navigate, user, searchText, setSearchText, locationFilter, setLocationFilter }) {
+      const filteredJobs = mockJobs.filter(j => {
+        if (searchText && !j.title.includes(searchText) && !j.company_name.includes(searchText)) return false;
+        if (locationFilter && j.location !== locationFilter) return false;
+        return true;
+      });
+
+      const recommendedJobs = user?.role === 'student'
+        ? mockJobs.filter(j => j.title.includes('Java') || j.location === '北京').slice(0, 3)
+        : [];
+
+      return (
+        <div className="page-container">
+          {recommendedJobs.length > 0 && (
+            <div className="recommend-banner">
+              <Row align="middle">
+                <Col flex="auto">
+                  <h4>✨ 为你推荐</h4>
+                  <p style={{ color: '#8c8c8c', fontSize: '13px', margin: 0 }}>根据你的专业和偏好，找到 {recommendedJobs.length} 个匹配岗位</p>
+                </Col>
+                <Col><Button type="primary" onClick={() => navigate('/student/applications')}>查看投递</Button></Col>
+              </Row>
+            </div>
+          )}
+
+          {/* Search */}
+          <Card style={{ marginBottom: 24 }}>
+            <Row gutter={16}>
+              <Col span={10}><Input.Search placeholder="搜索岗位名称或公司" value={searchText} onChange={e => setSearchText(e.target.value)} onSearch={() => {}} /></Col>
+              <Col span={4}>
+                <Select placeholder="地区" style={{ width: '100%' }} value={locationFilter} onChange={setLocationFilter} allowClear options={[{label:'北京',value:'北京'},{label:'上海',value:'上海'},{label:'深圳',value:'深圳'},{label:'杭州',value:'杭州'},{label:'广州',value:'广州'}]} />
+              </Col>
+              <Col span={4}>
+                <Select placeholder="薪资" style={{ width: '100%' }} allowClear options={[{label:'面议',value:'面议'},{label:'3k-5k',value:'3k-5k'},{label:'5k-8k',value:'5k-8k'},{label:'8k+',value:'8k+'}]} />
+              </Col>
+              <Col span={6}><Button type="primary" block>搜索</Button></Col>
+            </Row>
+          </Card>
+
+          {/* Recommended */}
+          {recommendedJobs.length > 0 && (
+            <div style={{ marginBottom: 24 }}>
+              <h3 style={{ marginBottom: 16 }}>为你推荐</h3>
+              <Row gutter={16}>
+                {recommendedJobs.map(job => (
+                  <Col span={8} key={job.id}>
+                    <Card hoverable className="job-card" onClick={() => navigate('/jobs/:id')} style={{ marginBottom: 16 }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
+                        <strong style={{ fontSize: 16 }}>{job.title}</strong>
+                        <Tag color="green">热招</Tag>
+                      </div>
+                      <div style={{ color: '#8c8c8c', fontSize: 13, marginBottom: 12 }}>{job.company_name} · {job.location}</div>
+                      <div style={{ marginBottom: 12 }}>
+                        <Tag className="tag-margin" color="blue">{job.location}</Tag>
+                        <Tag className="tag-margin" color="orange">{job.salary_min}-{job.salary_max}元/月</Tag>
+                      </div>
+                      <div style={{ color: '#8c8c8c', fontSize: 13, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{job.description}</div>
+                      <div style={{ marginTop: 12, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span style={{ fontSize: 12, color: '#bfbfbf' }}>发布于 {job.publish_time}</span>
+                        {user?.role === 'student' ? <Button type="primary" size="small">投递</Button> : <Button type="link" size="small">查看详情 →</Button>}
+                      </div>
+                    </Card>
+                  </Col>
+                ))}
+              </Row>
+            </div>
+          )}
+
+          {/* All Jobs */}
+          <h3 style={{ marginBottom: 16 }}>全部岗位 ({filteredJobs.length})</h3>
+          <List
+            dataSource={filteredJobs}
+            renderItem={job => (
+              <Card hoverable className="job-card" style={{ marginBottom: 12 }} onClick={() => navigate('/jobs/:id')}>
+                <Row>
+                  <Col span={16}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                      <Avatar style={{ background: '#1677ff', fontSize: 16 }}>{job.company_name[0]}</Avatar>
+                      <div>
+                        <strong style={{ fontSize: 16 }}>{job.title}</strong>
+                        <div style={{ color: '#8c8c8c', fontSize: 13, marginTop: 4 }}>{job.company_name} · {job.location}</div>
+                      </div>
+                    </div>
+                    <div style={{ marginTop: 12 }}>
+                      <Tag className="tag-margin" color="blue">{job.location}</Tag>
+                      <Tag className="tag-margin" color="orange">{job.salary_min}-{job.salary_max}元/月</Tag>
+                    </div>
+                  </Col>
+                  <Col span={8} style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-end' }}>
+                    {job.salary_max > 6000 && <Tag color="red" style={{ marginBottom: 8 }}>高薪</Tag>}
+                    <span style={{ fontSize: 12, color: '#bfbfbf' }}>{job.publish_time}</span>
+                    <Button type="primary" ghost size="small" style={{ marginTop: 8 }} onClick={(e) => { e.stopPropagation(); navigate('/jobs/:id'); }}>查看详情</Button>
+                  </Col>
+                </Row>
+              </Card>
+            )}
+          />
+        </div>
+      );
+    }
+
+    // ==================== Job Detail ====================
+    function JobDetailPage({ navigate, user }) {
+      const job = mockJobs[0];
+      return (
+        <div className="page-container">
+          <Breadcrumb style={{ marginBottom: 16 }} items={[{ title: '首页', onClick: () => navigate('/') }, { title: '岗位列表' }, { title: job.title }]} />
+          <Row gutter={24}>
+            <Col span={16}>
+              <div className="detail-header">
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                  <div>
+                    <h1 style={{ fontSize: 24, fontWeight: 600, marginBottom: 8 }}>{job.title}</h1>
+                    <div style={{ color: '#8c8c8c', marginBottom: 16 }}>{job.company_name} · {job.location}</div>
+                    <Space>
+                      <Tag color="blue">{job.location}</Tag>
+                      <Tag color="orange">{job.salary_min}-{job.salary_max}元/月</Tag>
+                      <Tag color="green">已发布</Tag>
+                    </Space>
+                  </div>
+                  {user?.role === 'student' ? (
+                    <Button type="primary" size="large">投递简历</Button>
+                  ) : user?.role === 'company' ? (
+                    <Space><Button>编辑</Button><Button danger>下架</Button></Space>
+                  ) : (
+                    <Button onClick={() => navigate('/login')}>登录后查看</Button>
+                  )}
+                </div>
+              </div>
+
+              <Card title="岗位描述" style={{ marginBottom: 16 }}>
+                <pre style={{ whiteSpace: 'pre-wrap', fontFamily: 'inherit', lineHeight: 1.8 }}>{job.description}</pre>
+              </Card>
+              <Card title="岗位要求">
+                <pre style={{ whiteSpace: 'pre-wrap', fontFamily: 'inherit', lineHeight: 1.8 }}>{job.requirements}</pre>
+              </Card>
+            </Col>
+            <Col span={8}>
+              <Card title="公司信息" style={{ marginBottom: 16 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+                  <Avatar size="large" style={{ background: '#1677ff' }}>{job.company_name[0]}</Avatar>
+                  <div><strong>{job.company_name}</strong><div style={{ fontSize: 12, color: '#8c8c8c' }}>{job.company_scale}</div></div>
+                </div>
+                <p style={{ color: '#595959', fontSize: 13 }}>{job.company_intro}</p>
+              </Card>
+              <Card>
+                <Statistic title="发布时间" value={job.publish_time} suffix="" />
+                <div style={{ marginTop: 12 }}><Statistic title="投递人数" value={42} suffix="人" /></div>
+              </Card>
+            </Col>
+          </Row>
+        </div>
+      );
+    }
+
+    // ==================== Login ====================
+    function LoginPage({ onLogin, navigate }) {
+      const [form] = Form.useForm();
+      return (
+        <div className="login-container">
+          <div className="login-card">
+            <div className="login-header">
+              <h2>🎓 实习通</h2>
+              <p>大学生实训实习岗位投递与校企对接系统</p>
+            </div>
+            <div className="login-body">
+              <Form form={form} layout="vertical" onFinish={onLogin} initialValues={{ role: 'student' }}>
+                <Form.Item label="登录角色" name="role" rules={[{ required: true }]}>
+                  <Radio.Group style={{ width: '100%' }}>
+                    <Radio.Button value="student" style={{ width: '33%', textAlign: 'center' }}>学生</Radio.Button>
+                    <Radio.Button value="company" style={{ width: '33%', textAlign: 'center' }}>企业</Radio.Button>
+                    <Radio.Button value="admin" style={{ width: '33%', textAlign: 'center' }}>管理员</Radio.Button>
+                  </Radio.Group>
+                </Form.Item>
+                <Form.Item label="账号" name="username" rules={[{ required: true, message: '请输入账号' }]}>
+                  <Input placeholder="请输入用户名/手机号/邮箱" size="large" />
+                </Form.Item>
+                <Form.Item label="密码" name="password" rules={[{ required: true, message: '请输入密码' }]}>
+                  <Input.Password placeholder="请输入密码" size="large" />
+                </Form.Item>
+                <Form.Item>
+                  <Button type="primary" htmlType="submit" block size="large" style={{ marginTop: 8 }}>登 录</Button>
+                </Form.Item>
+                <div style={{ textAlign: 'center', color: '#8c8c8c', fontSize: 13 }}>
+                  <a onClick={() => message.info('验证码已发送（开发模式：123456）')}>忘记密码？</a>
+                  <span style={{ margin: '0 12px' }}>|</span>
+                  <a onClick={() => navigate('/register/student')}>学生注册</a>
+                  <span style={{ margin: '0 12px' }}>|</span>
+                  <a onClick={() => navigate('/register/company')}>企业注册</a>
+                </div>
+              </Form>
+              <Alert style={{ marginTop: 16 }} type="info" showIcon message="开发模式演示" description="选择角色后直接登录，密码任意" />
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // ==================== Register ====================
+    function RegisterPage({ role, navigate }) {
+      const isStudent = role === 'student';
+      return (
+        <div className="login-container">
+          <div className="login-card">
+            <div className="login-header" style={{ background: isStudent ? 'linear-gradient(135deg, #13c2c2, #08979c)' : 'linear-gradient(135deg, #52c41a, #389e0d)' }}>
+              <h2>{isStudent ? '📚 学生注册' : '🏢 企业注册'}</h2>
+              <p>{isStudent ? '开启你的实习之旅' : '发布实习岗位，寻找优秀人才'}</p>
+            </div>
+            <div className="login-body">
+              <Form layout="vertical" onFinish={() => { message.success('注册成功'); navigate('/login'); }}>
+                <Form.Item label="手机号" name="phone" rules={[{ required: true }]}>
+                  <Input placeholder="请输入手机号" size="large" />
+                </Form.Item>
+                <Form.Item label="密码" name="password" rules={[{ required: true, min: 6 }]}>
+                  <Input.Password placeholder="至少6位" size="large" />
+                </Form.Item>
+                <Form.Item label="确认密码" name="confirm" dependencies={['password']} rules={[{ required: true }, ({ getFieldValue }) => ({ validator(_, v) { if (!v || getFieldValue('password') === v) return Promise.resolve(); return Promise.reject(new Error('两次密码不一致')); } })]}>
+                  <Input.Password placeholder="再次输入密码" size="large" />
+                </Form.Item>
+                {isStudent ? (<>
+                  <Row gutter={16}>
+                    <Col span={12}><Form.Item label="姓名" name="name" rules={[{ required: true }]}><Input placeholder="姓名" size="large" /></Form.Item></Col>
+                    <Col span={12}><Form.Item label="学号" name="studentId" rules={[{ required: true }]}><Input placeholder="学号" size="large" /></Form.Item></Col>
+                  </Row>
+                  <Form.Item label="专业" name="major" rules={[{ required: true }]}><Input placeholder="专业" size="large" /></Form.Item>
+                </>) : (<>
+                  <Row gutter={16}>
+                    <Col span={12}><Form.Item label="企业名称" name="companyName" rules={[{ required: true }]}><Input placeholder="企业名称" size="large" /></Form.Item></Col>
+                    <Col span={12}><Form.Item label="联系人" name="contactPerson" rules={[{ required: true }]}><Input placeholder="联系人姓名" size="large" /></Form.Item></Col>
+                  </Row>
+                </>)}
+                <Form.Item>
+                  <Form.Item name="agree" valuePropName="checked" rules={[{ validator: (_, v) => v ? Promise.resolve() : Promise.reject(new Error('请同意')) }]} noStyle>
+                    <Checkbox>我已阅读并同意 <a onClick={() => message.info('隐私政策页面')}>《隐私政策》</a> 和 <a onClick={() => message.info('用户协议页面')}>《用户协议》</a></Checkbox>
+                  </Form.Item>
+                </Form.Item>
+                <Form.Item>
+                  <Button type="primary" htmlType="submit" block size="large" style={{ marginTop: 8 }}>注 册</Button>
+                </Form.Item>
+              </Form>
+              <div style={{ textAlign: 'center', marginTop: 16, color: '#8c8c8c' }}>
+                已有账号？<a onClick={() => navigate('/login')}>立即登录</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // ==================== Student Applications ====================
+    function StudentApplicationsPage({ navigate }) {
+      const statusMap = { pending: { text: '待处理', color: 'processing' }, accepted: { text: '已接受', color: 'success' }, rejected: { text: '已拒绝', color: 'error' }, cancelled: { text: '已撤销', color: 'default' } };
+      const columns = [
+        { title: '岗位', dataIndex: 'job_title', key: 'job_title' },
+        { title: '企业', dataIndex: 'company_name', key: 'company_name' },
+        { title: '投递时间', dataIndex: 'apply_time', key: 'apply_time' },
+        { title: '状态', dataIndex: 'status', key: 'status', render: s => <Tag color={statusMap[s].color}>{statusMap[s].text}</Tag> },
+        { title: '处理时间', dataIndex: 'handle_time', key: 'handle_time', render: v => v || '-' },
+        { title: '操作', key: 'action', render: (_, r) => r.status === 'pending' ? <Button size="small" danger onClick={() => message.success('已撤销投递')}>撤销</Button> : <span>-</span> },
+      ];
+      return (
+        <div className="page-container">
+          <div className="page-header"><div className="page-title">我的投递</div><div className="page-subtitle">查看和管理你的投递记录</div></div>
+          <Card>
+            <Tabs defaultActiveKey="all" items={[
+              { key: 'all', label: '全部', children: <Table columns={columns} dataSource={mockApplications} rowKey="id" pagination={{ pageSize: 10 }} /> },
+              { key: 'pending', label: '待处理', children: <Table columns={columns} dataSource={mockApplications.filter(a => a.status === 'pending')} rowKey="id" /> },
+              { key: 'accepted', label: '已接受', children: <Table columns={columns} dataSource={mockApplications.filter(a => a.status === 'accepted')} rowKey="id" /> },
+              { key: 'rejected', label: '已拒绝', children: <Table columns={columns} dataSource={mockApplications.filter(a => a.status === 'rejected')} rowKey="id" /> },
+            ]} />
+          </Card>
+        </div>
+      );
+    }
+
+    // ==================== Company Applications ====================
+    function CompanyApplicationsPage() {
+      const [handleModal, setHandleModal] = useState(null);
+      const columns = [
+        { title: '学生', dataIndex: 'student_name', key: 'student_name' },
+        { title: '学号', dataIndex: 'student_id', key: 'student_id' },
+        { title: '专业', dataIndex: 'major', key: 'major' },
+        { title: '投递岗位', dataIndex: 'job_title', key: 'job_title' },
+        { title: '投递时间', dataIndex: 'apply_time', key: 'apply_time' },
+        { title: '状态', dataIndex: 'status', key: 'status', render: s => <Tag color={s === 'pending' ? 'processing' : s === 'accepted' ? 'success' : 'error'}>{s === 'pending' ? '待处理' : s === 'accepted' ? '已接受' : '已拒绝'}</Tag> },
+        { title: '操作', key: 'action', render: (_, r) => r.status === 'pending' ? (
+          <Space>
+            <Button size="small" type="primary" onClick={() => setHandleModal(r)}>查看简历</Button>
+            <Button size="small" onClick={() => Modal.confirm({ title: '接受投递', content: '确定接受该投递？', okText: '接受', onOk: () => message.success('已接受') })}>接受</Button>
+            <Button size="small" danger onClick={() => Modal.confirm({ title: '拒绝投递', content: <><Input.TextArea placeholder="拒绝原因（选填）" rows={2} /></>, okText: '拒绝', onOk: () => message.success('已拒绝') })}>拒绝</Button>
+          </Space>
+        ) : <span>-</span> },
+      ];
+      return (
+        <div className="page-container">
+          <div className="page-header"><div className="page-title">收到的投递</div><div className="page-subtitle">处理学生投递申请</div></div>
+          <Card>
+            <Table columns={columns} dataSource={mockReceivedApplications} rowKey="id" />
+          </Card>
+        </div>
+      );
+    }
+
+    // ==================== Company Jobs ====================
+    function CompanyJobsPage({ navigate }) {
+      const myJobs = [
+        ...mockJobs.slice(0, 3).map(j => ({ ...j, status: 'published' })),
+        { id: 7, title: '运维实习生', company_name: '阿里巴巴集团', location: '杭州', status: 'pending', publish_time: '2026-05-21' },
+        { id: 8, title: '测试实习生', company_name: '阿里巴巴集团', location: '北京', status: 'rejected', publish_time: '2026-05-15' },
+      ];
+      const statusMap = { pending: { text: '待审核', color: 'warning' }, published: { text: '已发布', color: 'success' }, rejected: { text: '已拒绝', color: 'error' }, closed: { text: '已下架', color: 'default' } };
+      const columns = [
+        { title: '岗位', dataIndex: 'title', key: 'title' },
+        { title: '地点', dataIndex: 'location', key: 'location' },
+        { title: '发布时间', dataIndex: 'publish_time', key: 'publish_time' },
+        { title: '状态', key: 'status', render: (_, r) => <Tag color={statusMap[r.status].color}>{statusMap[r.status].text}</Tag> },
+        { title: '操作', key: 'action', render: (_, r) => (
+          <Space>
+            <Button size="small">编辑</Button>
+            {r.status === 'published' && <Button size="small" danger>下架</Button>}
+            {(r.status === 'pending' || r.status === 'rejected') && <Button size="small" danger onClick={() => message.info('已删除')}>删除</Button>}
+          </Space>
+        )},
+      ];
+      return (
+        <div className="page-container">
+          <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div><div className="page-title">我发布的岗位</div><div className="page-subtitle">管理和查看你发布的实习岗位</div></div>
+            <Button type="primary" size="large" onClick={() => message.info('打开发布岗位表单')}>+ 发布岗位</Button>
+          </div>
+          <Card>
+            <Tabs defaultActiveKey="all" items={[
+              { key: 'all', label: `全部 (${myJobs.length})`, children: <Table columns={columns} dataSource={myJobs} rowKey="id" /> },
+              { key: 'published', label: '已发布', children: <Table columns={columns} dataSource={myJobs.filter(j => j.status === 'published')} rowKey="id" /> },
+              { key: 'pending', label: '待审核', children: <Table columns={columns} dataSource={myJobs.filter(j => j.status === 'pending')} rowKey="id" /> },
+              { key: 'rejected', label: '已拒绝', children: <Table columns={columns} dataSource={myJobs.filter(j => j.status === 'rejected')} rowKey="id" /> },
+            ]} />
+          </Card>
+        </div>
+      );
+    }
+
+    // ==================== Company Stats ====================
+    function CompanyStatsPage() {
+      return (
+        <div className="page-container">
+          <div className="page-header"><div className="page-title">数据统计</div><div className="page-subtitle">你的招聘数据概览</div></div>
+          <Row gutter={16} style={{ marginBottom: 24 }}>
+            <Col span={8}><Card className="stat-card"><div className="stat-number">3</div><div className="stat-label">发布岗位数</div></Card></Col>
+            <Col span={8}><Card className="stat-card"><div className="stat-number">28</div><div className="stat-label">收到投递</div></Card></Col>
+            <Col span={8}><Card className="stat-card"><div className="stat-number">12</div><div className="stat-label">已接受</div></Card></Col>
+          </Row>
+          <Row gutter={16}>
+            <Col span={12}><Card title="各岗位投递量"><div className="chart-placeholder">
+              <div style={{ display: 'flex', alignItems: 'flex-end', gap: 20 }}>
+                {[
+                  { label: 'Java', h: 120 },
+                  { label: '前端', h: 80 },
+                  { label: '运维', h: 40 },
+                ].map(b => <div key={b.label} style={{ textAlign: 'center' }}><div style={{ width: 40, height: b.h, background: '#1677ff', borderRadius: '4px 4px 0 0' }}></div><div style={{ fontSize: 12, marginTop: 8 }}>{b.label}</div></div>)}
+              </div>
+            </div></Card></Col>
+            <Col span={12}><Card title="投递状态分布"><div className="chart-placeholder">
+              <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
+                <div style={{ width: 120, height: 120, borderRadius: '50%', background: 'conic-gradient(#1677ff 0% 43%, #52c41a 43% 86%, #faad14 86% 100%)' }}></div>
+                <div><Tag color="blue">已接受 12 (43%)</Tag><br/><Tag color="green">已拒绝 8 (29%)</Tag><br/><Tag color="orange">待处理 8 (28%)</Tag></div>
+              </div>
+            </div></Card></Col>
+          </Row>
+        </div>
+      );
+    }
+
+    // ==================== Student Profile ====================
+    function StudentProfilePage() {
+      return (
+        <div className="page-container">
+          <div className="page-header"><div className="page-title">个人中心</div><div className="page-subtitle">管理你的个人信息</div></div>
+          <Row gutter={24}>
+            <Col span={16}>
+              <Card title="个人信息" style={{ marginBottom: 16 }}>
+                <Form layout="vertical" initialValues={{ name: '张三', studentId: '2021001234', major: '计算机科学与技术', phone: '13800138000', email: 'zhangsan@edu.cn', preferredJobs: 'Java开发,前端开发', preferredLocations: '北京,杭州' }}>
+                  <Row gutter={16}>
+                    <Col span={12}><Form.Item label="姓名" name="name"><Input /></Form.Item></Col>
+                    <Col span={12}><Form.Item label="学号" name="studentId"><Input disabled /></Form.Item></Col>
+                  </Row>
+                  <Row gutter={16}>
+                    <Col span={12}><Form.Item label="专业" name="major"><Input /></Form.Item></Col>
+                    <Col span={12}><Form.Item label="手机号" name="phone"><Input /></Form.Item></Col>
+                  </Row>
+                  <Row gutter={16}>
+                    <Col span={12}><Form.Item label="邮箱" name="email"><Input /></Form.Item></Col>
+                  </Row>
+                  <Form.Item label="期望岗位类型" name="preferredJobs"><Input placeholder="多个用逗号分隔" /></Form.Item>
+                  <Form.Item label="期望地区" name="preferredLocations"><Input placeholder="多个用逗号分隔" /></Form.Item>
+                  <Form.Item><Button type="primary">保存修改</Button></Form.Item>
+                </Form>
+              </Card>
+            </Col>
+            <Col span={8}>
+              <Card title="简历管理" style={{ marginBottom: 16 }}>
+                <div className="resume-section">
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+                    <span style={{ fontSize: 24 }}>📄</span>
+                    <div><strong>简历.pdf</strong><div style={{ fontSize: 12, color: '#8c8c8c' }}>2.3MB · 上传于 2026-05-19</div></div>
+                  </div>
+                  <Space><Button size="small">下载</Button><Button size="small" danger>删除</Button></Space>
+                </div>
+                <Upload.Dragger maxCount={1} beforeUpload={() => false}>
+                  <p style={{ color: '#8c8c8c' }}>点击或拖拽上传新简历（PDF，最大5MB）</p>
+                </Upload.Dragger>
+              </Card>
+              <Card title="安全设置">
+                <Button block>修改密码</Button>
+              </Card>
+            </Col>
+          </Row>
+        </div>
+      );
+    }
+
+    // ==================== Company Profile ====================
+    function CompanyProfilePage() {
+      return (
+        <div className="page-container">
+          <div className="page-header"><div className="page-title">企业中心</div><div className="page-subtitle">管理企业信息</div></div>
+          <Card title="企业信息" style={{ maxWidth: 600 }}>
+            <Form layout="vertical" initialValues={{ companyName: '阿里巴巴集团', contactPerson: '张HR', phone: '13900139000', email: 'hr@alibaba.com', companyIntro: '阿里巴巴集团是中国领先的互联网科技公司', companyScale: '10000人以上' }}>
+              <Form.Item label="企业名称" name="companyName"><Input disabled /></Form.Item>
+              <Form.Item label="联系人" name="contactPerson"><Input /></Form.Item>
+              <Form.Item label="手机号" name="phone"><Input /></Form.Item>
+              <Form.Item label="邮箱" name="email"><Input /></Form.Item>
+              <Form.Item label="企业简介" name="companyIntro"><Input.TextArea rows={3} /></Form.Item>
+              <Form.Item label="企业规模" name="companyScale"><Select options={[{label:'1-50人',value:'1-50人'},{label:'50-200人',value:'50-200人'},{label:'200-500人',value:'200-500人'},{label:'500-1000人',value:'500-1000人'},{label:'1000-5000人',value:'1000-5000人'},{label:'5000-10000人',value:'5000-10000人'},{label:'10000人以上',value:'10000人以上'}]} /></Form.Item>
+              <Form.Item><Button type="primary">保存修改</Button></Form.Item>
+            </Form>
+          </Card>
+        </div>
+      );
+    }
+
+    // ==================== Admin Review ====================
+    function AdminReviewPage() {
+      const [modalJob, setModalJob] = useState(null);
+      const columns = [
+        { title: '岗位', dataIndex: 'title', key: 'title' },
+        { title: '企业', dataIndex: 'company_name', key: 'company_name' },
+        { title: '地点', dataIndex: 'location', key: 'location' },
+        { title: '发布时间', dataIndex: 'publish_time', key: 'publish_time' },
+        { title: '操作', key: 'action', render: (_, r) => (
+          <Space>
+            <Button size="small" type="primary" onClick={() => setModalJob(r)}>查看详情</Button>
+          </Space>
+        )},
+      ];
+      return (
+        <div className="page-container">
+          <div className="page-header"><div className="page-title">岗位审核</div><div className="page-subtitle">审核企业发布的实习岗位</div></div>
+          <Card>
+            <Alert style={{ marginBottom: 16 }} type="info" message={`当前有 ${mockPendingJobs.length} 个岗位待审核`} />
+            <Table columns={columns} dataSource={mockPendingJobs} rowKey="id" />
+          </Card>
+          {modalJob && (
+            <Modal title="审核岗位" open={!!modalJob} onCancel={() => setModalJob(null)} footer={[
+              <Button danger onClick={() => { message.success('已拒绝'); setModalJob(null); }}>拒绝</Button>,
+              <Button type="primary" onClick={() => { message.success('已通过'); setModalJob(null); }}>通过</Button>,
+            ]}>
+              <Descriptions column={1} size="small">
+                <Descriptions.Item label="岗位">{modalJob.title}</Descriptions.Item>
+                <Descriptions.Item label="企业">{modalJob.company_name}</Descriptions.Item>
+                <Descriptions.Item label="地点">{modalJob.location}</Descriptions.Item>
+                <Descriptions.Item label="发布时间">{modalJob.publish_time}</Descriptions.Item>
+              </Descriptions>
+              <div style={{ marginTop: 16 }}>
+                <strong>审核意见：</strong>
+                <Input.TextArea placeholder="拒绝时必填" rows={2} style={{ marginTop: 8 }} />
+              </div>
+            </Modal>
+          )}
+        </div>
+      );
+    }
+
+    // ==================== Admin Users ====================
+    function AdminUsersPage() {
+      const columns = [
+        { title: '用户名', dataIndex: 'username', key: 'username' },
+        { title: '角色', dataIndex: 'role', key: 'role', render: r => <Tag color={r === 'student' ? 'blue' : r === 'company' ? 'green' : 'purple'}>{r === 'student' ? '学生' : r === 'company' ? '企业' : '管理员'}</Tag> },
+        { title: '姓名/名称', dataIndex: 'name', key: 'name' },
+        { title: '手机号', dataIndex: 'phone', key: 'phone' },
+        { title: '状态', dataIndex: 'status', key: 'status', render: s => <Tag color={s === 'normal' ? 'green' : 'red'}>{s === 'normal' ? '正常' : '已禁用'}</Tag> },
+        { title: '注册时间', dataIndex: 'create_time', key: 'create_time' },
+        { title: '操作', key: 'action', render: (_, r) => r.status === 'normal' ?
+          <Button size="small" danger onClick={() => Modal.confirm({ title: '确认禁用', content: `确定禁用用户「${r.name}」？`, okText: '确认禁用', onOk: () => message.success('已禁用') })}>禁用</Button> :
+          <Button size="small" type="primary" onClick={() => message.success('已启用')}>启用</Button>
+        },
+      ];
+      return (
+        <div className="page-container">
+          <div className="page-header"><div className="page-title">用户管理</div><div className="page-subtitle">管理系统用户</div></div>
+          <Card>
+            <Row style={{ marginBottom: 16 }}><Col span={6}><Select placeholder="按角色筛选" style={{ width: '100%' }} options={[{label:'学生',value:'student'},{label:'企业',value:'company'},{label:'管理员',value:'admin'}]} /></Col></Row>
+            <Table columns={columns} dataSource={mockUsers} rowKey="id" />
+          </Card>
+        </div>
+      );
+    }
+
+    // ==================== Admin Stats ====================
+    function AdminStatsPage() {
+      return (
+        <div className="page-container">
+          <div className="page-header"><div className="page-title">数据统计</div><div className="page-subtitle">系统整体运营数据</div></div>
+          <Row gutter={16} style={{ marginBottom: 24 }}>
+            <Col span={6}><Card className="stat-card"><div className="stat-number">8,234</div><div className="stat-label">注册用户</div></Card></Col>
+            <Col span={6}><Card className="stat-card"><div className="stat-number">1,567</div><div className="stat-label">岗位总数</div></Card></Col>
+            <Col span={6}><Card className="stat-card"><div className="stat-number">5,432</div><div className="stat-label">投递次数</div></Card></Col>
+            <Col span={6}><Card className="stat-card"><div className="stat-number">68%</div><div className="stat-label">投递接受率</div></Card></Col>
+          </Row>
+          <Row gutter={16}>
+            <Col span={12}><Card title="岗位状态分布"><div className="chart-placeholder">
+              <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
+                <div style={{ width: 120, height: 120, borderRadius: '50%', background: 'conic-gradient(#52c41a 0% 65%, #faad14 65% 80%, #ff4d4f 80% 90%, #8c8c8c 90% 100%)' }}></div>
+                <div>
+                  <Tag color="green">已发布 65%</Tag><br/>
+                  <Tag color="orange">待审核 15%</Tag><br/>
+                  <Tag color="red">已拒绝 10%</Tag><br/>
+                  <Tag>已下架 10%</Tag>
+                </div>
+              </div>
+            </div></Card></Col>
+            <Col span={12}><Card title="投递结果分布"><div className="chart-placeholder">
+              <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
+                <div style={{ width: 120, height: 120, borderRadius: '50%', background: 'conic-gradient(#52c41a 0% 42%, #ff4d4f 42% 68%, #1677ff 68% 85%, #8c8c8c 85% 100%)' }}></div>
+                <div>
+                  <Tag color="green">已接受 42%</Tag><br/>
+                  <Tag color="red">已拒绝 26%</Tag><br/>
+                  <Tag color="blue">待处理 17%</Tag><br/>
+                  <Tag>已撤销 15%</Tag>
+                </div>
+              </div>
+            </div></Card></Col>
+          </Row>
+          <Card title="投递量趋势（近7天）" style={{ marginTop: 16 }}>
+            <div className="chart-placeholder">
+              <div style={{ display: 'flex', alignItems: 'flex-end', gap: 16 }}>
+                {['周一','周二','周三','周四','周五','周六','周日'].map((d, i) => {
+                  const h = [45, 60, 55, 80, 70, 30, 50][i];
+                  return <div key={d} style={{ textAlign: 'center' }}><div style={{ width: 30, height: h, background: '#1677ff', borderRadius: '4px 4px 0 0' }}></div><div style={{ fontSize: 12, marginTop: 8 }}>{d}</div></div>;
+                })}
+              </div>
+            </div>
+          </Card>
+        </div>
+      );
+    }
+
+    // ==================== Admin Profile ====================
+    function AdminProfilePage() {
+      return (
+        <div className="page-container">
+          <div className="page-header"><div className="page-title">个人中心</div><div className="page-subtitle">管理员账户信息</div></div>
+          <Card style={{ maxWidth: 600 }} title="账户信息">
+            <Descriptions column={1}>
+              <Descriptions.Item label="管理员编号">ADMIN001</Descriptions.Item>
+              <Descriptions.Item label="用户名">admin</Descriptions.Item>
+            </Descriptions>
+            <Button type="primary" style={{ marginTop: 16 }} onClick={() => message.info('打开修改密码表单')}>修改密码</Button>
+          </Card>
+        </div>
+      );
+    }
+
+    // ==================== Notifications ====================
+    function NotificationsPage() {
+      return (
+        <div className="page-container">
+          <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div><div className="page-title">通知中心</div><div className="page-subtitle">查看系统通知</div></div>
+            <Button type="link" onClick={() => message.success('已全部标记已读')}>全部标记已读</Button>
+          </div>
+          <Card>
+            <List
+              dataSource={mockNotifications}
+              renderItem={item => (
+                <List.Item className={`notification-item ${item.status === 'unread' ? 'notification-unread' : ''}`} style={{ padding: '16px 24px', cursor: 'pointer' }}>
+                  <List.Item.Meta
+                    avatar={<Badge dot={item.status === 'unread'}><Avatar style={{ background: item.type === 'application' ? '#1677ff' : '#52c41a' }}>{item.type === 'application' ? '📋' : '📝'}</Avatar></Badge>}
+                    title={<div style={{ display: 'flex', justifyContent: 'space-between' }}><span>{item.content}</span><Tag color={item.type === 'application' ? 'blue' : 'green'} style={{ fontSize: 12 }}>{item.type === 'application' ? '投递通知' : '审核通知'}</Tag></div>}
+                    description={item.send_time}
+                  />
+                </List.Item>
+              )}
+            />
+          </Card>
+        </div>
+      );
+    }
+
+    // ==================== Mount ====================
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+  <!-- Ant Design CSS (loaded last to override) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/antd@5/dist/reset.css">
+</body>
+</html>

@@ -1,0 +1,81 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5] [cursor=pointer]:
+      - generic [ref=e6]: 🎓
+      - generic [ref=e7]: 实习通
+    - generic [ref=e8]:
+      - button "首页" [active] [ref=e10] [cursor=pointer]:
+        - generic [ref=e11]: 首页
+      - button "我的投递" [ref=e85] [cursor=pointer]:
+        - generic [ref=e86]: 我的投递
+      - button "个人中心" [ref=e88] [cursor=pointer]:
+        - generic [ref=e89]: 个人中心
+      - generic [ref=e90]:
+        - button "通知" [ref=e91] [cursor=pointer]:
+          - generic [ref=e92]: 通知
+        - superscript [ref=e93]:
+          - generic [ref=e95]: "2"
+      - button "张三（学生）" [ref=e97] [cursor=pointer]:
+        - generic [ref=e98]: 张三（学生）
+  - main [ref=e24]:
+    - generic [ref=e888]:
+      - generic [ref=e889]:
+        - generic [ref=e890]: 我的投递
+        - generic [ref=e891]: 查看和管理你的投递记录
+      - generic [ref=e894]:
+        - tablist [ref=e895]:
+          - generic [ref=e897]:
+            - tab "全部" [selected] [ref=e899] [cursor=pointer]
+            - tab "待处理" [ref=e901] [cursor=pointer]
+            - tab "已接受" [ref=e903] [cursor=pointer]
+            - tab "已拒绝" [ref=e905] [cursor=pointer]
+        - tabpanel [ref=e908]:
+          - generic [ref=e911]:
+            - table [ref=e915]:
+              - rowgroup [ref=e916]:
+                - row "岗位 企业 投递时间 状态 处理时间 操作" [ref=e917]:
+                  - columnheader "岗位" [ref=e918]
+                  - columnheader "企业" [ref=e919]
+                  - columnheader "投递时间" [ref=e920]
+                  - columnheader "状态" [ref=e921]
+                  - columnheader "处理时间" [ref=e922]
+                  - columnheader "操作" [ref=e923]
+              - rowgroup [ref=e924]:
+                - row "Java开发实习生 阿里巴巴集团 2026-05-19 10:30 待处理 - 撤 销" [ref=e925]:
+                  - cell "Java开发实习生" [ref=e926]
+                  - cell "阿里巴巴集团" [ref=e927]
+                  - cell "2026-05-19 10:30" [ref=e928]
+                  - cell "待处理" [ref=e929]:
+                    - generic [ref=e930]: 待处理
+                  - cell "-" [ref=e931]
+                  - cell "撤 销" [ref=e932]:
+                    - button "撤 销" [ref=e933] [cursor=pointer]:
+                      - generic [ref=e934]: 撤 销
+                - row "前端开发实习生 腾讯科技 2026-05-18 14:20 已接受 2026-05-19 09:15 -" [ref=e935]:
+                  - cell "前端开发实习生" [ref=e936]
+                  - cell "腾讯科技" [ref=e937]
+                  - cell "2026-05-18 14:20" [ref=e938]
+                  - cell "已接受" [ref=e939]:
+                    - generic [ref=e940]: 已接受
+                  - cell "2026-05-19 09:15" [ref=e941]
+                  - cell "-" [ref=e942]
+                - row "数据分析师实习生 字节跳动 2026-05-17 08:45 已拒绝 2026-05-18 11:30 -" [ref=e943]:
+                  - cell "数据分析师实习生" [ref=e944]
+                  - cell "字节跳动" [ref=e945]
+                  - cell "2026-05-17 08:45" [ref=e946]
+                  - cell "已拒绝" [ref=e947]:
+                    - generic [ref=e948]: 已拒绝
+                  - cell "2026-05-18 11:30" [ref=e949]
+                  - cell "-" [ref=e950]
+            - list [ref=e951]:
+              - listitem "Previous Page" [ref=e952]:
+                - button "left" [disabled] [ref=e953]:
+                  - img "left" [ref=e954]:
+                    - img [ref=e955]
+              - listitem "1" [ref=e957] [cursor=pointer]:
+                - generic [ref=e958]: "1"
+              - listitem "Next Page" [ref=e959]:
+                - button "right" [disabled] [ref=e960]:
+                  - img "right" [ref=e961]:
+                    - img [ref=e962]
+  - contentinfo [ref=e83]: © 2026 实习通 — 大学生实训实习岗位投递与校企对接系统

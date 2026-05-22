@@ -1,0 +1,75 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5] [cursor=pointer]:
+      - generic [ref=e6]: 🎓
+      - generic [ref=e7]: 实习通
+    - generic [ref=e8]:
+      - button "首页" [ref=e10] [cursor=pointer]:
+        - generic [ref=e11]: 首页
+      - button "岗位审核" [ref=e463] [cursor=pointer]:
+        - generic [ref=e464]: 岗位审核
+      - button "用户管理" [ref=e465] [cursor=pointer]:
+        - generic [ref=e466]: 用户管理
+      - button "数据统计" [ref=e467] [cursor=pointer]:
+        - generic [ref=e468]: 数据统计
+      - generic [ref=e470]:
+        - button "通知" [ref=e471] [cursor=pointer]:
+          - generic [ref=e472]: 通知
+        - superscript [ref=e473]:
+          - generic [ref=e475]: "2"
+      - button "系统管理员" [ref=e477] [cursor=pointer]:
+        - generic [ref=e478]: 系统管理员
+  - main [ref=e24]:
+    - generic [ref=e542]:
+      - generic [ref=e543]:
+        - generic [ref=e544]: 岗位审核
+        - generic [ref=e545]: 审核企业发布的实习岗位
+      - generic [ref=e547]:
+        - alert [ref=e548]:
+          - generic [ref=e550]: 当前有 3 个岗位待审核
+        - generic [ref=e553]:
+          - table [ref=e557]:
+            - rowgroup [ref=e558]:
+              - row "岗位 企业 地点 发布时间 操作" [ref=e559]:
+                - columnheader "岗位" [ref=e560]
+                - columnheader "企业" [ref=e561]
+                - columnheader "地点" [ref=e562]
+                - columnheader "发布时间" [ref=e563]
+                - columnheader "操作" [ref=e564]
+            - rowgroup [ref=e565]:
+              - row "Java开发实习生 阿里巴巴集团 杭州 2026-05-21 09:00 查看详情" [ref=e566]:
+                - cell "Java开发实习生" [ref=e567]
+                - cell "阿里巴巴集团" [ref=e568]
+                - cell "杭州" [ref=e569]
+                - cell "2026-05-21 09:00" [ref=e570]
+                - cell "查看详情" [ref=e571]:
+                  - button "查看详情" [ref=e574] [cursor=pointer]:
+                    - generic [ref=e575]: 查看详情
+              - row "前端开发实习生 腾讯科技 深圳 2026-05-21 10:30 查看详情" [ref=e576]:
+                - cell "前端开发实习生" [ref=e577]
+                - cell "腾讯科技" [ref=e578]
+                - cell "深圳" [ref=e579]
+                - cell "2026-05-21 10:30" [ref=e580]
+                - cell "查看详情" [ref=e581]:
+                  - button "查看详情" [ref=e584] [cursor=pointer]:
+                    - generic [ref=e585]: 查看详情
+              - row "UI设计实习生 网易 广州 2026-05-21 14:00 查看详情" [ref=e586]:
+                - cell "UI设计实习生" [ref=e587]
+                - cell "网易" [ref=e588]
+                - cell "广州" [ref=e589]
+                - cell "2026-05-21 14:00" [ref=e590]
+                - cell "查看详情" [ref=e591]:
+                  - button "查看详情" [ref=e594] [cursor=pointer]:
+                    - generic [ref=e595]: 查看详情
+          - list [ref=e596]:
+            - listitem "Previous Page" [ref=e597]:
+              - button "left" [disabled] [ref=e598]:
+                - img "left" [ref=e599]:
+                  - img [ref=e600]
+            - listitem "1" [ref=e602] [cursor=pointer]:
+              - generic [ref=e603]: "1"
+            - listitem "Next Page" [ref=e604]:
+              - button "right" [disabled] [ref=e605]:
+                - img "right" [ref=e606]:
+                  - img [ref=e607]
+  - contentinfo [ref=e167]: © 2026 实习通 — 大学生实训实习岗位投递与校企对接系统

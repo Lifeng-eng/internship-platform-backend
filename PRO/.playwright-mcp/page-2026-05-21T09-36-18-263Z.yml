@@ -1,0 +1,65 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5] [cursor=pointer]:
+      - generic [ref=e6]: 🎓
+      - generic [ref=e7]: 实习通
+    - generic [ref=e8]:
+      - button "首页" [ref=e10] [cursor=pointer]:
+        - generic [ref=e11]: 首页
+      - button "岗位审核" [ref=e463] [cursor=pointer]:
+        - generic [ref=e464]: 岗位审核
+      - button "用户管理" [ref=e465] [cursor=pointer]:
+        - generic [ref=e466]: 用户管理
+      - button "数据统计" [active] [ref=e467] [cursor=pointer]:
+        - generic [ref=e468]: 数据统计
+      - generic [ref=e470]:
+        - button "通知" [ref=e471] [cursor=pointer]:
+          - generic [ref=e472]: 通知
+        - superscript [ref=e473]:
+          - generic [ref=e475]: "2"
+      - button "系统管理员" [ref=e477] [cursor=pointer]:
+        - generic [ref=e478]: 系统管理员
+  - main [ref=e24]:
+    - generic [ref=e931]:
+      - generic [ref=e932]:
+        - generic [ref=e933]: 数据统计
+        - generic [ref=e934]: 系统整体运营数据
+      - generic [ref=e935]:
+        - generic [ref=e938]:
+          - generic [ref=e939]: 8,234
+          - generic [ref=e940]: 注册用户
+        - generic [ref=e943]:
+          - generic [ref=e944]: 1,567
+          - generic [ref=e945]: 岗位总数
+        - generic [ref=e948]:
+          - generic [ref=e949]: 5,432
+          - generic [ref=e950]: 投递次数
+        - generic [ref=e953]:
+          - generic [ref=e954]: 68%
+          - generic [ref=e955]: 投递接受率
+      - generic [ref=e956]:
+        - generic [ref=e958]:
+          - generic [ref=e961]: 岗位状态分布
+          - generic [ref=e966]:
+            - generic [ref=e967]: 已发布 65%
+            - generic [ref=e968]: 待审核 15%
+            - generic [ref=e969]: 已拒绝 10%
+            - generic [ref=e970]: 已下架 10%
+        - generic [ref=e972]:
+          - generic [ref=e975]: 投递结果分布
+          - generic [ref=e980]:
+            - generic [ref=e981]: 已接受 42%
+            - generic [ref=e982]: 已拒绝 26%
+            - generic [ref=e983]: 待处理 17%
+            - generic [ref=e984]: 已撤销 15%
+      - generic [ref=e985]:
+        - generic [ref=e988]: 投递量趋势（近7天）
+        - generic [ref=e991]:
+          - generic [ref=e994]: 周一
+          - generic [ref=e997]: 周二
+          - generic [ref=e1000]: 周三
+          - generic [ref=e1003]: 周四
+          - generic [ref=e1006]: 周五
+          - generic [ref=e1009]: 周六
+          - generic [ref=e1012]: 周日
+  - contentinfo [ref=e167]: © 2026 实习通 — 大学生实训实习岗位投递与校企对接系统
