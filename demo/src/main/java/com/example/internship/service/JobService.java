@@ -271,7 +271,8 @@ public class JobService {
     private void setApplyStatus(JobVO vo, Long userId) {
         var apps = applicationMapper.selectList(new LambdaQueryWrapper<Application>()
                 .eq(Application::getStudentId, userId)
-                .eq(Application::getJobId, vo.getId()));
+                .eq(Application::getJobId, vo.getId())
+                .orderByDesc(Application::getId));
         if (!apps.isEmpty()) {
             vo.setApplyStatus(apps.get(0).getStatus());
             vo.setApplicationId(apps.get(0).getId());
